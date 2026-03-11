@@ -21,6 +21,7 @@ from services.history_service import (
     get_user_statistics,
     format_verification_for_response
 )
+from models import ml_model
 
 # Initialize FastAPI app (Trigger reload)
 app = FastAPI(title="AI Fake News Analysis API")
@@ -95,15 +96,36 @@ async def predict(request: PredictRequest, current_user_id: str = Depends(get_cu
         search_query = extracted_title if extracted_title else text[:100]
         evidence = search_news_evidence(search_query)
         
-        # 2. Get Gen AI Analysis via OpenRouter
+        # 2. Try Gen AI Analysis via OpenRouter first
         ai_result = analyze_news_with_genai(text, evidence)
-        
-        if 'error' in ai_result and not ai_result.get('data'):
-            return JSONResponse(status_code=500, content={"error": f"AI Analysis failed: {ai_result['error']}"})
-            
-        analysis_data = ai_result['data']
-        meta_info = ai_result['meta']
-        
+
+        if ai_result.get("data") and ai_result.get("meta"):
+            # Preferred path: structured GenAI response
+            analysis_data = ai_result["data"]
+            meta_info = ai_result["meta"]
+        else:
+            # Fallback: use local ML model so we never hard-fail with 500
+            model_result = ml_model.predict(text)
+            label = model_result.get("label", "Unknown")
+            confidence = float(model_result.get("confidence", 0))
+            credibility_score = confidence if label == "Real" else 100.0 - confidence
+
+            analysis_data = {
+                "prediction": label,
+                "confidence": confidence,
+                "credibility_score": credibility_score,
+                "reason_summary": model_result.get("note", "Heuristic ML analysis result."),
+                "explanation": model_result.get("note", "Heuristic ML analysis result."),
+                "suspicious_phrases": [],
+            }
+            meta_info = {
+                "model": model_result.get("model", "ml_model"),
+                "tokens_prompt": 0,
+                "tokens_completion": 0,
+                "tokens_total": 0,
+                "time_seconds": 0.0,
+            }
+
         # Save to history
         verification_id = save_full_verification(
             user_id=current_user_id,
@@ -153,18 +175,30 @@ async def predict_public(request: PredictRequest):
         search_query = text[:100]
         evidence = search_news_evidence(search_query)
         ai_result = analyze_news_with_genai(text, evidence)
-        
-        if 'error' in ai_result and not ai_result.get('data'):
-            return JSONResponse(status_code=500, content={"error": f"AI Analysis failed: {ai_result['error']}"})
-            
-        analysis_data = ai_result['data']
-        
+
+        if ai_result.get("data"):
+            analysis_data = ai_result["data"]
+        else:
+            # Fallback to local ML model instead of returning 500
+            model_result = ml_model.predict(text)
+            label = model_result.get("label", "Unknown")
+            confidence = float(model_result.get("confidence", 0))
+            credibility_score = confidence if label == "Real" else 100.0 - confidence
+
+            analysis_data = {
+                "prediction": label,
+                "confidence": confidence,
+                "credibility_score": credibility_score,
+                "suspicious_phrases": [],
+                "reason_summary": model_result.get("note", "Heuristic ML analysis result."),
+            }
+
         return {
-            'label': analysis_data.get('prediction', 'Unknown'),
-            'confidence': analysis_data.get('confidence', 0),
-            'credibility_score': analysis_data.get('credibility_score', 0),
-            'keywords': analysis_data.get('suspicious_phrases', [])[:5],
-            'reason_summary': analysis_data.get('reason_summary', '')
+            "label": analysis_data.get("prediction", "Unknown"),
+            "confidence": analysis_data.get("confidence", 0),
+            "credibility_score": analysis_data.get("credibility_score", 0),
+            "keywords": analysis_data.get("suspicious_phrases", [])[:5],
+            "reason_summary": analysis_data.get("reason_summary", ""),
         }
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
