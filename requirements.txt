@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pymongo
+python-multipart
+PyJWT
+tavily-python
+openai>=1.59.0
+python-dotenv
+newspaper3k
+reportlab
+requests
+lxml
+lxml_html_clean
+werkzeug>=3.0.0

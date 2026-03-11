@@ -1,0 +1,46 @@
+{
+  "sensational": [
+    "shocking", "unbelievable", "incredible", "mind-blowing", "jaw-dropping",
+    "explosive", "bombshell", "devastating", "terrifying", "horrifying",
+    "outrageous", "insane", "crazy", "wild", "massive", "huge", "enormous",
+    "breaking", "urgent", "alert", "warning", "emergency", "crisis"
+  ],
+  "clickbait": [
+    "you won't believe", "what happens next", "doctors hate", "one weird trick",
+    "they don't want you to know", "secret revealed", "the truth about",
+    "is this the end", "find out why", "see what happened", "wait until you see",
+    "this changes everything", "you need to see this", "gone wrong", "gone viral",
+    "will shock you", "left speechless", "can't stop laughing", "crying tears",
+    "makes you think", "number 5 will", "what they found", "the real reason"
+  ],
+  "exaggeration": [
+    "always", "never", "everyone", "nobody", "all", "none", "every single",
+    "absolutely", "completely", "totally", "entirely", "perfectly", "exactly",
+    "guaranteed", "proven", "definitely", "certainly", "undoubtedly", "100%",
+    "the best", "the worst", "the only", "the first ever", "unprecedented",
+    "revolutionary", "game-changing", "life-changing", "world-changing"
+  ],
+  "emotional": [
+    "outrageous", "disgusting", "horrifying", "terrifying", "devastating",
+    "heartbreaking", "infuriating", "enraging", "sickening", "appalling",
+    "shameful", "disgraceful", "unforgivable", "unacceptable", "tragic",
+    "beautiful", "amazing", "wonderful", "incredible", "inspiring",
+    "heroic", "brave", "courageous", "evil", "wicked", "sinister"
+  ],
+  "uncertainty_hedges": [
+    "allegedly", "reportedly", "according to sources", "some say", "rumored",
+    "unconfirmed", "unverified", "claimed", "purported", "supposed",
+    "it is believed", "sources say", "insiders claim", "anonymous sources"
+  ],
+  "bias_indicators": [
+    "liberals", "conservatives", "left-wing", "right-wing", "radical",
+    "extremist", "socialist", "fascist", "elites", "establishment",
+    "mainstream media", "fake news", "deep state", "propaganda", "agenda",
+    "brainwashing", "indoctrination", "sheeple", "wake up"
+  ],
+  "scientific_misuse": [
+    "studies show", "research proves", "scientists confirm", "experts agree",
+    "doctors recommend", "breakthrough discovery", "miracle cure", "wonder drug",
+    "natural remedy", "big pharma", "suppressed cure", "ancient secret"
+  ]
+}
